@@ -321,6 +321,357 @@ class _MyAppointmentParentsState extends State<MyAppointmentParents> {
 
     return Column(children: actions);
   }
+  void _showRatingDialog(
+  BuildContext context,
+  String appointmentId,
+  String psychologistId,
+) {
+  int rating = 0;
+
+  final TextEditingController reviewController =
+      TextEditingController();
+
+  showDialog(
+    context: context,
+
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Dialog(
+            backgroundColor:
+                const Color(0xFF1A1A1A),
+
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(24),
+            ),
+
+            child: Padding(
+              padding:
+                  const EdgeInsets.all(22),
+
+              child: Column(
+                mainAxisSize:
+                    MainAxisSize.min,
+
+                children: [
+                  Container(
+                    height: 75,
+                    width: 75,
+
+                    decoration: BoxDecoration(
+                      color: accentGreen
+                          .withOpacity(0.12),
+
+                      shape: BoxShape.circle,
+                    ),
+
+                    child: const Icon(
+                      Icons.star_rounded,
+                      color: accentGreen,
+                      size: 42,
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  const Text(
+                    "Rate Your Session",
+
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Text(
+                    "Share your experience",
+
+                    style: TextStyle(
+                      color: Colors.white
+                          .withOpacity(0.5),
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment
+                            .center,
+
+                    children: List.generate(
+                      5,
+                      (index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              rating =
+                                  index + 1;
+                            });
+                          },
+
+                          child: Padding(
+                            padding:
+                                const EdgeInsets
+                                    .symmetric(
+                              horizontal: 4,
+                            ),
+
+                            child: Icon(
+                              rating >
+                                      index
+                                  ? Icons.star
+                                  : Icons
+                                      .star_border,
+
+                              color: rating >
+                                      index
+                                  ? Colors.amber
+                                  : Colors.white
+                                      .withOpacity(
+                                      0.2,
+                                    ),
+
+                              size: 38,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  TextField(
+                    controller:
+                        reviewController,
+
+                    maxLines: 4,
+
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+
+                    decoration: InputDecoration(
+                      hintText:
+                          "Write your review...",
+
+                      hintStyle:
+                          TextStyle(
+                        color: Colors.white
+                            .withOpacity(
+                          0.3,
+                        ),
+                      ),
+
+                      filled: true,
+
+                      fillColor:
+                          darkBg,
+
+                      border:
+                          OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius
+                                .circular(
+                          18,
+                        ),
+
+                        borderSide:
+                            BorderSide.none,
+                      ),
+
+                      enabledBorder:
+                          OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius
+                                .circular(
+                          18,
+                        ),
+
+                        borderSide:
+                            BorderSide(
+                          color: Colors
+                              .white
+                              .withOpacity(
+                            0.04,
+                          ),
+                        ),
+                      ),
+
+                      focusedBorder:
+                          OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius
+                                .circular(
+                          18,
+                        ),
+
+                        borderSide:
+                            const BorderSide(
+                          color:
+                              accentGreen,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child:
+                            OutlinedButton(
+                          style:
+                              OutlinedButton
+                                  .styleFrom(
+                            side:
+                                BorderSide(
+                              color: Colors
+                                  .white
+                                  .withOpacity(
+                                0.08,
+                              ),
+                            ),
+
+                            padding:
+                                const EdgeInsets
+                                    .symmetric(
+                              vertical: 15,
+                            ),
+
+                            shape:
+                                RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius
+                                      .circular(
+                                16,
+                              ),
+                            ),
+                          ),
+
+                          onPressed: () {
+                            Navigator.pop(
+                                context);
+                          },
+
+                          child: const Text(
+                            "Cancel",
+
+                            style: TextStyle(
+                              color:
+                                  Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      Expanded(
+                        child:
+                            ElevatedButton(
+                          style:
+                              ElevatedButton
+                                  .styleFrom(
+                            backgroundColor:
+                                accentGreen,
+
+                            foregroundColor:
+                                Colors.white,
+
+                            padding:
+                                const EdgeInsets
+                                    .symmetric(
+                              vertical: 15,
+                            ),
+
+                            shape:
+                                RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius
+                                      .circular(
+                                16,
+                              ),
+                            ),
+                          ),
+
+                          onPressed:
+                              () async {
+                            if (rating ==
+                                0) {
+                              return;
+                            }
+
+                            await supabase
+                                .from(
+                                    'tbl_rating')
+                                .insert({
+                              'appointment_id':
+                                  int.parse(
+                                appointmentId,
+                              ),
+
+                              'psychologist_id':
+                                  psychologistId,
+
+                              'rating':
+                                  rating,
+
+                              'review':
+                                  reviewController
+                                      .text
+                                      .trim(),
+                            });
+
+                            if (mounted) {
+                              Navigator.pop(
+                                  context);
+
+                              ScaffoldMessenger
+                                      .of(
+                                          context)
+                                  .showSnackBar(
+                                const SnackBar(
+                                  backgroundColor:
+                                      accentGreen,
+
+                                  content: Text(
+                                    "Review submitted successfully",
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+
+                          child: const Text(
+                            "Submit",
+
+                            style: TextStyle(
+                              fontWeight:
+                                  FontWeight
+                                      .bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 
   Widget _bottomButton(
     String label,
